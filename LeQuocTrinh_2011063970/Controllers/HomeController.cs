@@ -1,16 +1,32 @@
-﻿using System;
+﻿using LeQuocTrinh_2011063970.Models;
+using Microsoft.AspNet.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI.WebControls;
+using System.Data.Entity;
 
 namespace LeQuocTrinh_2011063970.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
+        private ApplicationDbContext _dbContext;
+
+        public HomeController()
         {
-            return View();
+            _dbContext = new ApplicationDbContext();
+        }
+        
+        public ActionResult Index() 
+        {
+            var upcommingCourses = _dbContext.Courses
+                .Include(c => c.Lecturer)
+                .Include(c => c.Category)
+                .Where(c => c.DateTime > DateTime.Now);
+
+            return View(upcommingCourses);
         }
 
         public ActionResult About()
